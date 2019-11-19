@@ -63,16 +63,14 @@ class TensorboardLogger(LoggerCallback):
             log_dir = os.path.join(state.logdir, f"{lm}_log")
             self.loggers[lm] = SummaryWriter(log_dir)
 
-
     def on_batch_end(self, state: RunnerState):
         """Translate batch metrics to tensorboard"""
-        model = state.model
-        n_iter = state.epoch
-        for name, param in model.named_parameters():
-            if 'bn' not in name:            
-                logger.add_histogram(name, param.grad, n_iter)
 
         if self.log_on_batch_end:
+            for name, param in state.model.named_parameters():
+                if 'bn' not in name:
+                    self.loggers[state.loader_name].add_histogram('Grad', param.data, state.step)
+
             mode = state.loader_name
             metrics_ = state.metrics.batch_values
             self._log_metrics(

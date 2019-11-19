@@ -1,3 +1,19 @@
+from typing import Dict, List  # isort:skip
+import logging
+import os
+import sys
+from urllib.parse import quote_plus
+from urllib.request import Request, urlopen
+
+from tqdm import tqdm
+
+from catalyst.dl import utils
+from catalyst.dl.core import LoggerCallback, RunnerState
+from catalyst.dl.utils.formatters import TxtMetricsFormatter
+from catalyst.utils import format_metric
+from catalyst.utils.tensorboard import SummaryWriter
+
+
 class TensorboardLogger(LoggerCallback):
     """
     Logger callback, translates ``state.metrics`` to tensorboard
@@ -47,8 +63,15 @@ class TensorboardLogger(LoggerCallback):
             log_dir = os.path.join(state.logdir, f"{lm}_log")
             self.loggers[lm] = SummaryWriter(log_dir)
 
+
     def on_batch_end(self, state: RunnerState):
         """Translate batch metrics to tensorboard"""
+        model = state.model
+        n_iter = state.epoch
+        for name, param in model.named_parameters():
+            if 'bn' not in name:            
+                logger.add_histogram(name, param.grad, n_iter)
+
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.metrics.batch_values
@@ -74,6 +97,3 @@ class TensorboardLogger(LoggerCallback):
         """Close opened tensorboard writers"""
         for logger in self.loggers.values():
             logger.close()
-
-
-

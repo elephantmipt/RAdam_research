@@ -1,7 +1,9 @@
-import math
+from pathlib import Path
+
 import torch
-from torch.optim.optimizer import Optimizer, required
-from tensorboard import SummaryWriter
+import torch.nn as nn
+import torch.utils.data as d
+from tensorboardX import SummaryWriter
 
 
 class Config:
@@ -12,7 +14,9 @@ class Config:
 
 class Trainer:
 
-    def __init__(self, model, config, train_loader, test_loader, loss, log_dir):
+    def __init__(self, model: nn.Module, config: Config,
+                 train_loader: d.DataLoader, test_loader: d.DataLoader,
+                 loss: nn.Module, log_dir: Path):
 
         self.cuda = config.cuda
         self.device = config.device
@@ -36,7 +40,7 @@ class Trainer:
 
         self.model = model
         self.optimizer = config.optimizer(self.model.parameters(), lr=self.lr)
-        self.logger = SummaryWriter(log_dir)
+        self.logger = SummaryWriter(log_dir.as_posix())
 
     def change_conf(self, config):
         self.cuda = config.cuda
@@ -64,18 +68,20 @@ class Trainer:
             loss.backward()
             for name, param in self.model.named_parameters():
                 if 'bn' not in name:
-                    assert(any(param.grad != 0))
-                    self.logger.add_histogram('Gradient', param.grad, self.globaliter)
+                    self.logger.add_histogram('Gradient',
+                                              param.grad, self.globaliter)
 
             self.optimizer.step()
 
             if batch_idx % self.log_interval == 0:
-                print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                    epoch, batch_idx * len(data), len(self.train_loader.dataset),
-                           100. * batch_idx / len(self.train_loader), loss.item()))
-                self.tb.save_value('Train Loss', 'train_loss', self.globaliter, loss.item())
+                print(f'Train Epoch: {epoch} [{batch_idx * len(data)}/'
+                      f'{len(self.train_loader.dataset)} '
+                      f'({100. * batch_idx / len(self.train_loader):.0f}%)]\t'
+                      f'Loss: {loss.item():.6f}')
+                self.logger.add_scalar('Train Loss', loss.item(),
+                                       self.globaliter)
 
-    def test(self, epoch):
+    def test(self):
         self.model.eval()
         test_loss = 0
         correct = 0
@@ -85,12 +91,13 @@ class Trainer:
                 data, target = data.to(self.device), target.to(self.device)
                 predictions = self.model(data)
 
-                test_loss += F.nll_loss(predictions, target, reduction='sum').item()
-                prediction = predictions.argmax(dim=1, keepdim=True)
-                correct += prediction.eq(target.view_as(prediction)).sum().item()
+                test_loss += self.loss(predictions, target).item()
+                pred = predictions.argmax(dim=1, keepdim=True)
+                correct += pred.eq(target.view_as(pred)).sum().item()
 
             test_loss /= len(self.test_loader.dataset)
             accuracy = 100. * correct / len(self.test_loader.dataset)
 
-            print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-                test_loss, correct, len(self.test_loader.dataset), accuracy))
+            print(f'Test set: Average loss: {test_loss:.4f},'
+                  f' Accuracy: {correct}/{len(self.test_loader.dataset)}'
+                  f' ({accuracy:.0f}%)')

@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torch.utils.data as d
 from tensorboardX import SummaryWriter
+from torch.optim.lr_scheduler import MultiStepLR
 
 
 class Config:
@@ -29,6 +30,7 @@ class Trainer:
         self.log_interval = config.log_interval
         self.loss = loss
 
+
         self.globaliter = 0
 
         torch.manual_seed(self.seed)
@@ -42,6 +44,8 @@ class Trainer:
         self.model = model
         self.optimizer = config.optimizer(self.model.parameters(), lr=self.lr)
         self.logger = SummaryWriter(log_dir.as_posix())
+
+        self.scheduler = MultiStepLR(self.optimizer, milestones=config.milestones, gamma=config.gamma)
 
         self.model.to(self.device)
 
@@ -77,6 +81,7 @@ class Trainer:
                                               param.grad, self.globaliter)
 
             self.optimizer.step()
+            self.scheduler.step(epoch)
 
             pbar.set_description(desc=f"Train epoch {epoch}: loss={loss.item():.6f}")
             self.logger.add_scalar('Train Loss', loss.item(), self.globaliter)

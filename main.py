@@ -2,12 +2,13 @@ from pathlib import Path
 import yaml
 
 import torch
-import torch.nn as nn
+
 from torch.utils.data import DataLoader
+
 
 from torchvision.datasets import CIFAR10
 from torchvision import transforms
-from torchvision.models import resnet34
+from torchvision.models import resnet18
 
 from source.trainer import Trainer, Config
 from source.optimizer import AdamW, RAdam
@@ -21,6 +22,7 @@ def init_weights(m):
 def main():
     with open("source/config.yml", 'r') as file:
         config = Config(**yaml.load(file)['opt_config'])
+        scheduler_config = Config
 
     cifar_train = CIFAR10('.', train=True, transform=transforms.Compose([transforms.Resize((224, 224)),
                                                                          transforms.ToTensor()]),
@@ -37,7 +39,7 @@ def main():
 
     loaders = {'train': dl_train, 'valid': dl_test}
 
-    model = resnet34()
+    model = resnet18()
 
     model.train()
     criterion = torch.nn.CrossEntropyLoss()
@@ -69,6 +71,17 @@ def main():
     runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
                      log_dir=Path(logdir))
 
+    for e in range(config.epochs):
+        runner.train(e)
+
+    runner.test()
+
+    logdir = "./logdir/SGD"
+
+    model.apply(init_weights)
+    config.optimizer = torch.optim.SGD(momentum=0.9)
+    runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
+                     log_dir=Path(logdir))
     for e in range(config.epochs):
         runner.train(e)
 

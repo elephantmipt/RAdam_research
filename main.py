@@ -47,8 +47,7 @@ def main():
 
     for e in range(config.epochs):
         runner.train(e)
-
-    runner.test()
+        runner.test()
 
     logdir = "./logdir/AdamW"
 
@@ -59,8 +58,7 @@ def main():
 
     for e in range(config.epochs):
         runner.train(e)
-
-    runner.test()
+        runner.test()
 
     logdir = "./logdir/RAdam"
 
@@ -71,8 +69,7 @@ def main():
 
     for e in range(config.epochs):
         runner.train(e)
-
-    runner.test()
+        runner.test()
 
 
 if __name__ == '__main__':

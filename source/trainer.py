@@ -60,7 +60,7 @@ class Trainer:
 
         self.model.train()
         pbar = tqdm(self.train_loader, desc=f"Train epoch {epoch}: loss={0}",
-                    total=len(self.train_loader.dataset))
+                    total=len(self.train_loader.dataset) // self.batch_size)
         for data, target in pbar:
 
             self.globaliter += 1

@@ -19,8 +19,8 @@ def init_weights(m):
 
 
 def main():
-    with open("config.yaml", 'r') as file:
-        config = yaml.load(file)
+    with open("source/config.yml", 'r') as file:
+        config = Config(**yaml.load(file)['opt_config'])
 
     cifar_train = CIFAR10('.', train=True, transform=transforms.Compose([transforms.Resize((224, 224)),
                                                                          transforms.ToTensor()]),
@@ -41,11 +41,11 @@ def main():
 
     model.train()
     criterion = torch.nn.CrossEntropyLoss()
-    config['optimizer'] = torch.optim.Adam(model.parameters())
+    config.optimizer = torch.optim.Adam
     runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
                      log_dir=Path(logdir))
 
-    for e in range(config['epochs']):
+    for e in range(config.epochs):
         runner.train(e)
 
     runner.test()
@@ -53,11 +53,11 @@ def main():
     logdir = "./logdir/AdamW"
 
     model.apply(init_weights)
-    config['optimizer'] = AdamW(model.parameters())
+    config.optimizer = AdamW
     runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
                      log_dir=Path(logdir))
 
-    for e in range(config['epochs']):
+    for e in range(config.epochs):
         runner.train(e)
 
     runner.test()
@@ -65,11 +65,11 @@ def main():
     logdir = "./logdir/RAdam"
 
     model.apply(init_weights)
-    config['optimizer'] = RAdam(model.parameters())
+    config.optimizer = RAdam
     runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
                      log_dir=Path(logdir))
 
-    for e in range(config['epochs']):
+    for e in range(config.epochs):
         runner.train(e)
 
     runner.test()

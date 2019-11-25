@@ -22,11 +22,10 @@ class Trainer:
 
         self.cuda = config.cuda
         self.device = config.device
-        self.seed = config.seed
-        self.lr = config.lr
-        self.epochs = config.epochs
-        self.save_model = config.save_model
-        self.batch_size = config.batch_size
+        self.seed = int(config.seed)
+        self.lr = float(config.lr)
+        self.epochs = int(config.epochs)
+        self.batch_size = int(config.batch_size)
         self.log_interval = config.log_interval
         self.loss = loss
 
@@ -58,9 +57,9 @@ class Trainer:
     def train(self, epoch):
 
         self.model.train()
-        pbar = tqdm(self.train_loader, desc=f"Train epoch {e}: loss={0}",
+        pbar = tqdm(self.train_loader, desc=f"Train epoch {epoch}: loss={0}",
                     total=len(self.train_loader.dataset))
-        for batch_idx, (data, target) in pbar:
+        for data, target in pbar:
 
             self.globaliter += 1
             data, target = data.to(self.device), target.to(self.device)
@@ -77,10 +76,8 @@ class Trainer:
 
             self.optimizer.step()
 
-            if batch_idx % self.log_interval == 0:
-                pbar.set_description(desc=f"Train epoch {e}: loss={loss.item():.6f}")
-                self.logger.add_scalar('Train Loss', loss.item(),
-                                       self.globaliter)
+            pbar.set_description(desc=f"Train epoch {epoch}: loss={loss.item():.6f}")
+            self.logger.add_scalar('Train Loss', loss.item(), self.globaliter)
 
     def test(self):
         self.model.eval()

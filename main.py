@@ -29,8 +29,8 @@ def main():
                                                                          transforms.ToTensor()]),
                          download=True)
 
-    dl_train = DataLoader(cifar_train, batch_size=16)
-    dl_test = DataLoader(cifar_test, batch_size=16)
+    dl_train = DataLoader(cifar_train, batch_size=config.batch_size)
+    dl_test = DataLoader(cifar_test, batch_size=config.batch_size)
 
     logdir = "./logdir/Adam"
     num_epochs = 10

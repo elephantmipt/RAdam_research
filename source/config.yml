@@ -1,0 +1,9 @@
+opt_config:
+  cuda:
+  device: cuda
+  seed: 0
+  lr: 1e-3
+  epochs: 20
+  batch_size: 64
+  optimizer: RAdam
+  log_interval: 1

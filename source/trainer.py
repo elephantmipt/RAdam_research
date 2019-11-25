@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from tqdm import tqdm
+
 import torch
 import torch.nn as nn
 import torch.utils.data as d
@@ -56,7 +58,9 @@ class Trainer:
     def train(self, epoch):
 
         self.model.train()
-        for batch_idx, (data, target) in enumerate(self.train_loader):
+        pbar = tqdm(self.train_loader, desc=f"Train epoch {e}: loss={0}",
+                    total=len(self.train_loader.dataset))
+        for batch_idx, (data, target) in pbar:
 
             self.globaliter += 1
             data, target = data.to(self.device), target.to(self.device)
@@ -74,10 +78,7 @@ class Trainer:
             self.optimizer.step()
 
             if batch_idx % self.log_interval == 0:
-                print(f'Train Epoch: {epoch} [{batch_idx * len(data)}/'
-                      f'{len(self.train_loader.dataset)} '
-                      f'({100. * batch_idx / len(self.train_loader):.0f}%)]\t'
-                      f'Loss: {loss.item():.6f}')
+                pbar.set_description(desc=f"Train epoch {e}: loss={loss.item():.6f}")
                 self.logger.add_scalar('Train Loss', loss.item(),
                                        self.globaliter)
 

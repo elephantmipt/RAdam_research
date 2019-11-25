@@ -3,6 +3,8 @@ import yaml
 
 import torch
 
+import shutil
+
 from torch.utils.data import DataLoader
 
 
@@ -33,11 +35,13 @@ def main():
 
     dl_train = DataLoader(cifar_train, batch_size=config.batch_size)
     dl_test = DataLoader(cifar_test, batch_size=config.batch_size)
+    try:
+        shutil.rmtree('./logdir')
+        print('Previous logs deleted')
+    except:
+        print('There is no previous logs')
 
     logdir = "./logdir/Adam"
-    num_epochs = 10
-
-    loaders = {'train': dl_train, 'valid': dl_test}
 
     model = resnet18()
 

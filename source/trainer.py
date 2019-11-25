@@ -43,6 +43,8 @@ class Trainer:
         self.optimizer = config.optimizer(self.model.parameters(), lr=self.lr)
         self.logger = SummaryWriter(log_dir.as_posix())
 
+        self.model.to(self.device)
+
     def change_conf(self, config):
         self.cuda = config.cuda
         self.device = config.device

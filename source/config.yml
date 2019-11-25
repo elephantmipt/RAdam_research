@@ -1,6 +1,6 @@
 opt_config:
   cuda:
-  device:
+  device: cuda
   seed: 0
   lr: 1e-3
   epochs: 20

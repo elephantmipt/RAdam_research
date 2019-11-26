@@ -25,12 +25,20 @@ def main():
     with open("source/config.yml", 'r') as file:
         config = Config(**yaml.load(file)['opt_config'])
         scheduler_config = Config
+    transform_train = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
 
-    cifar_train = CIFAR10('.', train=True, transform=transforms.Compose([transforms.Resize((224, 224)),
-                                                                         transforms.ToTensor()]),
+    transform_test = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+    cifar_train = CIFAR10('.', train=True, transform=transform_train,
                           download=True)
-    cifar_test = CIFAR10('.', train=False, transform=transforms.Compose([transforms.Resize((224, 224)),
-                                                                         transforms.ToTensor()]),
+    cifar_test = CIFAR10('.', train=False, transform=transform_test,
                          download=True)
 
     dl_train = DataLoader(cifar_train, batch_size=config.batch_size)

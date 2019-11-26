@@ -70,7 +70,11 @@ def main():
         runner.test(e)
 
     print('Training with AdamW optimizer...')
+    torch.cuda.empty_cache()
+    del model
+    model = resnet18()
 
+    model.train()
     logdir = "./logdir/AdamW"
 
     model.apply(init_weights)
@@ -83,7 +87,11 @@ def main():
         runner.test(e)
 
     print('Training with RAdam optimizer...')
+    torch.cuda.empty_cache()
+    del model
+    model = resnet18()
 
+    model.train()
     logdir = "./logdir/RAdam"
 
     model.apply(init_weights)
@@ -96,7 +104,11 @@ def main():
         runner.test(e)
 
     print('Training with SGD optimizer...')
+    torch.cuda.empty_cache()
+    del model
+    model = resnet18()
 
+    model.train()
     logdir = "./logdir/SGD"
 
     model.apply(init_weights)

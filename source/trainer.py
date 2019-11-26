@@ -92,25 +92,11 @@ class Trainer:
             pbar.set_description(desc=f"Train epoch {epoch}: loss={loss.item():.6f}")
             self.logger.add_scalar('Train Loss', loss.item(), self.globaliter)
 
-            if (epoch != self.prev_epoch):
-                test_loss = 0
-                correct = 0
-                self.prev_epoch = epoch
-                for data, target in self.test_loader:
-                    data, target = data.to(self.device), target.to(self.device)
-                    predictions = self.model(data)
 
-                    test_loss += self.loss(predictions, target).item()
-                    pred = predictions.argmax(dim=1, keepdim=True)
-                    correct += pred.eq(target.view_as(pred)).sum().item()
 
-                test_loss /= len(self.test_loader.dataset)
-                accuracy = 100. * correct / len(self.test_loader.dataset)
-                self.logger.add_scalar('Test Accuracy', accuracy, epoch)
-                self.logger.add_scalar('Test loss', test_loss, epoch)
-                print('Test accuracy is: {}\n Test loss is: {}'.format(accuracy, test_loss))
 
-    def test(self):
+
+    def test(self, epoch=-1):
         self.model.eval()
         test_loss = 0
         correct = 0
@@ -126,7 +112,9 @@ class Trainer:
 
             test_loss /= len(self.test_loader.dataset)
             accuracy = 100. * correct / len(self.test_loader.dataset)
-
+            if (epoch >= 0):
+                self.logger.add_scalar('Test accuracy', accuracy, epoch)
+                self.logger.add_scalar('Test loss', test_loss, epoch)
             print(f'Test set: Average loss: {test_loss:.4f},'
                   f' Accuracy: {correct}/{len(self.test_loader.dataset)}'
                   f' ({accuracy:.0f}%)')

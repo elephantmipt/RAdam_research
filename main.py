@@ -67,7 +67,7 @@ def main():
 
     for e in range(config.epochs):
         runner.train(e)
-        runner.test()
+        runner.test(e)
 
     print('Training with AdamW optimizer...')
 
@@ -80,7 +80,7 @@ def main():
 
     for e in range(config.epochs):
         runner.train(e)
-        runner.test()
+        runner.test(e)
 
     print('Training with RAdam optimizer...')
 
@@ -93,7 +93,7 @@ def main():
 
     for e in range(config.epochs):
         runner.train(e)
-        runner.test()
+        runner.test(e)
 
     print('Training with SGD optimizer...')
 
@@ -105,7 +105,7 @@ def main():
                      test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
     for e in range(config.epochs):
         runner.train(e)
-        runner.test()
+        runner.test(e)
 
 
 if __name__ == '__main__':

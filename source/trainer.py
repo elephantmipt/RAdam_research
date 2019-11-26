@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.utils.data as d
 from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import MultiStepLR
+import numpy as np
 
 
 class Config:
@@ -60,6 +61,8 @@ class Trainer:
         self.batch_size = config.batch_size
         self.log_interval = config.log_interval
         self.optimizer = config.optimizer(self.model.parameters(), lr=self.lr)
+        self.log_iters = self.log_hist()
+
 
     def train(self, epoch):
 
@@ -76,10 +79,12 @@ class Trainer:
 
             loss = self.loss(predictions, target)
             loss.backward()
-            for name, param in self.model.named_parameters():
-                if 'bn' not in name:
-                    self.logger.add_histogram('Gradient',
-                                              param.grad, self.globaliter)
+
+            if self.globaliter in self.log_iters:
+                for name, param in self.model.named_parameters():
+                    if 'bn' not in name:
+                        self.logger.add_histogram('Gradient',
+                                                param.grad, self.globaliter)
 
             self.optimizer.step()
             self.scheduler.step(epoch)
@@ -105,6 +110,7 @@ class Trainer:
                 accuracy = 100. * correct / len(self.test_loader.dataset)
                 self.logger.add_scalar('Test Accuracy', accuracy, epoch)
                 self.logger.add_scalar('Test loss', test_loss, epoch)
+                print('Test accuracy is: {}\n Test loss is: {}'.format(accuracy, test_loss))
 
     def test(self):
         self.model.eval()
@@ -126,3 +132,25 @@ class Trainer:
             print(f'Test set: Average loss: {test_loss:.4f},'
                   f' Accuracy: {correct}/{len(self.test_loader.dataset)}'
                   f' ({accuracy:.0f}%)')
+
+
+    def log_hist(self):
+        total_batches = len(self.train_loader.dataset) // self.batch_size
+        total_iterations = total_batches * self.epochs
+        log = 1
+        current_rate_count = 0
+        current_step = 5
+        log_iters = []
+        while log < total_iterations:
+            if current_rate_count < 3:
+                current_rate_count += 1
+                log_iters.append(log)
+                log += current_step
+            else:
+                current_rate_count = 0
+                current_step *= 5
+        return log_iters
+
+
+
+

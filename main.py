@@ -61,8 +61,8 @@ def main():
     model.train()
     criterion = torch.nn.CrossEntropyLoss()
     config.optimizer = torch.optim.Adam
-    runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
-                     log_dir=Path(logdir))
+    runner = Trainer(model=model, config=config, train_loader=dl_train,
+                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
 
     for e in range(config.epochs):
         runner.train(e)
@@ -74,8 +74,8 @@ def main():
 
     model.apply(init_weights)
     config.optimizer = AdamW
-    runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
-                     log_dir=Path(logdir))
+    runner = Trainer(model=model, config=config, train_loader=dl_train,
+                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
 
     for e in range(config.epochs):
         runner.train(e)
@@ -87,8 +87,8 @@ def main():
 
     model.apply(init_weights)
     config.optimizer = RAdam
-    runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
-                     log_dir=Path(logdir))
+    runner = Trainer(model=model, config=config, train_loader=dl_train,
+                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
 
     for e in range(config.epochs):
         runner.train(e)
@@ -100,12 +100,11 @@ def main():
 
     model.apply(init_weights)
     config.optimizer = torch.optim.SGD(momentum=0.9)
-    runner = Trainer(model=model, config=config, train_loader=dl_train, test_loader=dl_test, loss=criterion,
-                     log_dir=Path(logdir))
+    runner = Trainer(model=model, config=config, train_loader=dl_train,
+                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
     for e in range(config.epochs):
         runner.train(e)
-
-    runner.test()
+        runner.test()
 
 
 if __name__ == '__main__':

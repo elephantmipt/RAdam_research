@@ -46,7 +46,7 @@ class Trainer:
         self.model = model
         self.optimizer = config.optimizer(self.model.parameters(), lr=self.lr)
         self.logger = SummaryWriter(log_dir.as_posix())
-
+        self.log_iters = self.log_hist()
         self.scheduler = MultiStepLR(self.optimizer, milestones=config.milestones, gamma=config.gamma)
         self.log_iters = self.log_hist()
         self.model.to(self.device)

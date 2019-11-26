@@ -2,8 +2,12 @@ opt_config:
   cuda:
   device: cuda
   seed: 0
-  lr: 1e-3
-  epochs: 20
-  batch_size: 256
+  lr: 1e-4
+  epochs: 164
+  batch_size: 64
   optimizer: RAdam
   log_interval: 1
+  gamma: 0.1
+  milestones:
+    - 66
+    - 122

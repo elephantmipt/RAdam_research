@@ -92,8 +92,6 @@ class Trainer:
             pbar.set_description(desc=f"Train epoch {epoch}: loss={loss.item():.6f}")
             self.logger.add_scalar('Train Loss', loss.item(), self.globaliter)
 
-
-
             if (epoch != self.prev_epoch):
                 test_loss = 0
                 correct = 0
@@ -132,7 +130,6 @@ class Trainer:
             print(f'Test set: Average loss: {test_loss:.4f},'
                   f' Accuracy: {correct}/{len(self.test_loader.dataset)}'
                   f' ({accuracy:.0f}%)')
-
 
     def log_hist(self):
         total_batches = len(self.train_loader.dataset) // self.batch_size

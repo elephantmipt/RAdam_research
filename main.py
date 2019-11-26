@@ -41,6 +41,8 @@ def main():
     except:
         print('There is no previous logs')
 
+    print('Training with Adam optimizer...')
+
     logdir = "./logdir/Adam"
 
     model = resnet18()
@@ -56,6 +58,8 @@ def main():
 
     runner.test()
 
+    print('Training with AdamW optimizer...')
+
     logdir = "./logdir/AdamW"
 
     model.apply(init_weights)
@@ -68,6 +72,8 @@ def main():
 
     runner.test()
 
+    print('Training with RAdam optimizer...')
+
     logdir = "./logdir/RAdam"
 
     model.apply(init_weights)
@@ -79,6 +85,8 @@ def main():
         runner.train(e)
 
     runner.test()
+
+    print('Training with SGD optimizer...')
 
     logdir = "./logdir/SGD"
 

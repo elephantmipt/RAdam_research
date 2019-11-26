@@ -26,8 +26,7 @@ def main():
         config = Config(**yaml.load(file)['opt_config'])
         scheduler_config = Config
     transform_train = transforms.Compose([
-        # transforms.RandomCrop(32, padding=4),
-        # transforms.ToTensor(),
+        transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -36,9 +35,10 @@ def main():
     ])
 
     transform_test = transforms.Compose([
-        # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
         transforms.Resize((224, 224)),
-        transforms.ToTensor()
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465),
+                             (0.2023, 0.1994, 0.2010)),
     ])
     cifar_train = CIFAR10('.', train=True, transform=transform_train,
                           download=True)

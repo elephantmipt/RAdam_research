@@ -81,14 +81,15 @@ class Trainer:
             loss.backward()
 
             if self.globaliter in self.log_iters:
+                hist_arr = []
                 for name, param in self.model.named_parameters():
                     if 'bn' not in name:
-                        gradients = param.grad.numpy()
-                        hist_arr = []
+                        gradients = param.grad.cpu().data.numpy()
+                        
                         for grad in gradients:
                             hist_arr.append(np.linalg.norm(grad))
-                        self.logger.add_histogram('Gradient', np.log(hist_arr)
-                                                  , self.globaliter)
+                self.logger.add_histogram('Gradient', np.log(hist_arr)
+                                          , self.globaliter)
 
             self.optimizer.step()
             self.scheduler.step(epoch)

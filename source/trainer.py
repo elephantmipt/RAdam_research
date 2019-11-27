@@ -8,6 +8,7 @@ import torch.utils.data as d
 from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import MultiStepLR
 import numpy as np
+import pickle
 
 
 class Config:
@@ -90,6 +91,8 @@ class Trainer:
                             hist_arr.append(np.linalg.norm(grad))
                 self.logger.add_histogram('Gradient', np.log(hist_arr)
                                           , self.globaliter)
+                with open('hist_buf_{}.pkl'.format(self.globaliter), 'wb') as o:
+                    pickle.dump(obj=hist_arr, file=o)
 
             self.optimizer.step()
             self.scheduler.step(epoch)

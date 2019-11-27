@@ -83,8 +83,12 @@ class Trainer:
             if self.globaliter in self.log_iters:
                 for name, param in self.model.named_parameters():
                     if 'bn' not in name:
-                        self.logger.add_histogram('Gradient',
-                                                param.grad, self.globaliter)
+                        gradients = param.grad.numpy()
+                        hist_arr = []
+                        for grad in gradients:
+                            hist_arr.append(np.linalg.norm(grad))
+                        self.logger.add_histogram('Gradient', np.log(hist_arr)
+                                                  , self.globaliter)
 
             self.optimizer.step()
             self.scheduler.step(epoch)

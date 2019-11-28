@@ -53,24 +53,7 @@ def main():
     except:
         print('There is no previous logs')
 
-    print('Training with Adam optimizer...')
-
-    logdir = "./logdir/Adam"
-
-    model = resnet18().cuda()
-
-    model.train()
-    criterion = torch.nn.CrossEntropyLoss()
-    config.optimizer = torch.optim.Adam
-    runner = Trainer(model=model, config=config, train_loader=dl_train,
-                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
-
-    for e in range(config.epochs):
-        runner.train(e)
-        runner.test(e)
-
     print('Training with AdamW optimizer...')
-    del model
     torch.cuda.empty_cache()
     model = resnet18().cuda()
 

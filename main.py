@@ -57,7 +57,7 @@ def main():
 
     logdir = "./logdir/Adam"
 
-    model = resnet18()
+    model = resnet18().cuda()
 
     model.train()
     criterion = torch.nn.CrossEntropyLoss()
@@ -70,14 +70,13 @@ def main():
         runner.test(e)
 
     print('Training with AdamW optimizer...')
-    torch.cuda.empty_cache()
     del model
-    model = resnet18()
+    torch.cuda.empty_cache()
+    model = resnet18().cuda()
 
     model.train()
     logdir = "./logdir/AdamW"
 
-    model.apply(init_weights)
     config.optimizer = AdamW
     runner = Trainer(model=model, config=config, train_loader=dl_train,
                      test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
@@ -86,15 +85,14 @@ def main():
         runner.train(e)
         runner.test(e)
 
-    print('Training with RAdam optimizer...')
-    torch.cuda.empty_cache()
+    print('Training with AdamW optimizer...')
     del model
-    model = resnet18()
+    torch.cuda.empty_cache()
+    model = resnet18().cuda()
 
     model.train()
     logdir = "./logdir/RAdam"
 
-    model.apply(init_weights)
     config.optimizer = RAdam
     runner = Trainer(model=model, config=config, train_loader=dl_train,
                      test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
@@ -104,14 +102,13 @@ def main():
         runner.test(e)
 
     print('Training with SGD optimizer...')
-    torch.cuda.empty_cache()
+    print('Training with AdamW optimizer...')
     del model
-    model = resnet18()
+    torch.cuda.empty_cache()
+    model = resnet18().cuda()
 
     model.train()
     logdir = "./logdir/SGD"
-
-    model.apply(init_weights)
     config.optimizer = torch.optim.SGD(momentum=0.9)
     runner = Trainer(model=model, config=config, train_loader=dl_train,
                      test_loader=dl_test, loss=criterion, log_dir=Path(logdir))

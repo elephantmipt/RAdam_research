@@ -30,6 +30,7 @@ class Trainer:
         self.epochs = int(config.epochs)
         self.batch_size = int(config.batch_size)
         self.log_interval = config.log_interval
+        self.log_dir = str(log_dir)
         self.loss = loss
         self.prev_epoch=0
 
@@ -91,7 +92,7 @@ class Trainer:
                             hist_arr.append(np.linalg.norm(grad))
                 self.logger.add_histogram('Gradient', np.log(hist_arr)
                                           , self.globaliter)
-                with open('hist_buf_{}.pkl'.format(self.globaliter), 'wb') as o:
+                with open(self.log_dir + '/hist_buf_{}.pkl'.format(self.globaliter), 'wb') as o:
                     pickle.dump(obj=hist_arr, file=o)
 
             self.optimizer.step()

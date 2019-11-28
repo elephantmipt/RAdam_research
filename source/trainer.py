@@ -139,7 +139,7 @@ class Trainer:
             if current_rate_count < 3:
                 current_rate_count += 1
                 log_iters.append(log)
-                log += current_step
+                log += min(current_step, 3125)
             else:
                 current_rate_count = 0
                 current_step *= 5

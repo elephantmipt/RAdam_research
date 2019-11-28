@@ -134,7 +134,7 @@ class Trainer:
         log = 1
         current_rate_count = 0
         current_step = 5
-        log_iters = []
+        log_iters = [0]
         while log < total_iterations:
             if current_rate_count < 3:
                 current_rate_count += 1

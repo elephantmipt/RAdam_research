@@ -52,6 +52,8 @@ def main():
         print('Previous logs deleted')
     except:
         print('There is no previous logs')
+        
+    criterion = torch.nn.CrossEntropyLoss()
 
     print('Training with AdamW optimizer...')
     torch.cuda.empty_cache()

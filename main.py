@@ -60,7 +60,7 @@ def main():
     model = resnet18().cuda()
 
     model.train()
-    logdir = "./logdir/RAdam"
+    logdir = "./logdir/Adam"
 
     config.optimizer = torch.optim.Adam
     runner = Trainer(model=model, config=config, train_loader=dl_train,
@@ -72,56 +72,56 @@ def main():
         if runner.globaliter >= 100:
             break
 
-    print('Training with AdamW optimizer...')
-    torch.cuda.empty_cache()
-    model = resnet18().cuda()
-
-    model.train()
-    logdir = "./logdir/AdamW"
-
-    config.optimizer = AdamW
-    runner = Trainer(model=model, config=config, train_loader=dl_train,
-                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
-
-    for e in range(config.epochs):
-        runner.train(e)
-        runner.test(e)
-        if runner.globaliter >= 100:
-            break
-
-    print('Training with RAdam optimizer...')
-    del model
-    torch.cuda.empty_cache()
-    model = resnet18().cuda()
-
-    model.train()
-    logdir = "./logdir/RAdam"
-
-    config.optimizer = RAdam
-    runner = Trainer(model=model, config=config, train_loader=dl_train,
-                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
-
-    for e in range(config.epochs):
-        runner.train(e)
-        runner.test(e)
-        if runner.globaliter >= 100:
-            break
-
-    print('Training with SGD optimizer...')
-    del model
-    torch.cuda.empty_cache()
-    model = resnet18().cuda()
-
-    model.train()
-    logdir = "./logdir/SGD"
-    config.optimizer = torch.optim.SGD(momentum=0.9)
-    runner = Trainer(model=model, config=config, train_loader=dl_train,
-                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
-    for e in range(config.epochs):
-        runner.train(e)
-        runner.test(e)
-        if runner.globaliter >= 100:
-            break
+    # print('Training with AdamW optimizer...')
+    # torch.cuda.empty_cache()
+    # model = resnet18().cuda()
+    #
+    # model.train()
+    # logdir = "./logdir/AdamW"
+    #
+    # config.optimizer = AdamW
+    # runner = Trainer(model=model, config=config, train_loader=dl_train,
+    #                  test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
+    #
+    # for e in range(config.epochs):
+    #     runner.train(e)
+    #     runner.test(e)
+    #     if runner.globaliter >= 100:
+    #         break
+    #
+    # print('Training with RAdam optimizer...')
+    # del model
+    # torch.cuda.empty_cache()
+    # model = resnet18().cuda()
+    #
+    # model.train()
+    # logdir = "./logdir/RAdam"
+    #
+    # config.optimizer = RAdam
+    # runner = Trainer(model=model, config=config, train_loader=dl_train,
+    #                  test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
+    #
+    # for e in range(config.epochs):
+    #     runner.train(e)
+    #     runner.test(e)
+    #     if runner.globaliter >= 100:
+    #         break
+    #
+    # print('Training with SGD optimizer...')
+    # del model
+    # torch.cuda.empty_cache()
+    # model = resnet18().cuda()
+    #
+    # model.train()
+    # logdir = "./logdir/SGD"
+    # config.optimizer = torch.optim.SGD(momentum=0.9)
+    # runner = Trainer(model=model, config=config, train_loader=dl_train,
+    #                  test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
+    # for e in range(config.epochs):
+    #     runner.train(e)
+    #     runner.test(e)
+    #     if runner.globaliter >= 100:
+    #         break
 
 
 if __name__ == '__main__':

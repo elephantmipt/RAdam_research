@@ -48,9 +48,8 @@ class Trainer:
         self.model = model
         self.optimizer = config.optimizer(self.model.parameters(), lr=self.lr)
         self.logger = SummaryWriter(log_dir.as_posix())
-        self.log_iters = self.log_hist()
         self.scheduler = MultiStepLR(self.optimizer, milestones=config.milestones, gamma=config.gamma)
-        self.log_iters = self.log_hist()
+        self.log_iters = list(i for i in range(100))
         self.model.to(self.device)
 
     def change_conf(self, config):
@@ -64,7 +63,6 @@ class Trainer:
         self.log_interval = config.log_interval
         self.optimizer = config.optimizer(self.model.parameters(), lr=self.lr)
         self.log_iters = self.log_hist()
-
 
     def train(self, epoch):
 
@@ -100,10 +98,6 @@ class Trainer:
 
             pbar.set_description(desc=f"Train epoch {epoch}: loss={loss.item():.6f}")
             self.logger.add_scalar('Train Loss', loss.item(), self.globaliter)
-
-
-
-
 
     def test(self, epoch=-1):
         self.model.eval()

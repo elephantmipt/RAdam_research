@@ -55,6 +55,23 @@ def main():
         
     criterion = torch.nn.CrossEntropyLoss()
 
+    print('Training with Adam optimizer...')
+    torch.cuda.empty_cache()
+    model = resnet18().cuda()
+
+    model.train()
+    logdir = "./logdir/RAdam"
+
+    config.optimizer = torch.optim.Adam
+    runner = Trainer(model=model, config=config, train_loader=dl_train,
+                     test_loader=dl_test, loss=criterion, log_dir=Path(logdir))
+
+    for e in range(config.epochs):
+        runner.train(e)
+        runner.test(e)
+        if runner.globaliter >= 100:
+            break
+
     print('Training with AdamW optimizer...')
     torch.cuda.empty_cache()
     model = resnet18().cuda()
@@ -69,8 +86,10 @@ def main():
     for e in range(config.epochs):
         runner.train(e)
         runner.test(e)
+        if runner.globaliter >= 100:
+            break
 
-    print('Training with AdamW optimizer...')
+    print('Training with RAdam optimizer...')
     del model
     torch.cuda.empty_cache()
     model = resnet18().cuda()
@@ -85,9 +104,10 @@ def main():
     for e in range(config.epochs):
         runner.train(e)
         runner.test(e)
+        if runner.globaliter >= 100:
+            break
 
     print('Training with SGD optimizer...')
-    print('Training with AdamW optimizer...')
     del model
     torch.cuda.empty_cache()
     model = resnet18().cuda()
@@ -100,6 +120,8 @@ def main():
     for e in range(config.epochs):
         runner.train(e)
         runner.test(e)
+        if runner.globaliter >= 100:
+            break
 
 
 if __name__ == '__main__':

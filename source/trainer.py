@@ -49,7 +49,7 @@ class Trainer:
         self.optimizer = config.optimizer(self.model.parameters(), lr=self.lr)
         self.logger = SummaryWriter(log_dir.as_posix())
         self.scheduler = MultiStepLR(self.optimizer, milestones=config.milestones, gamma=config.gamma)
-        self.log_iters = list(i for i in range(100))
+        self.log_iters = list(i for i in range(50))
         self.model.to(self.device)
 
     def change_conf(self, config):

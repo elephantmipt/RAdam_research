@@ -82,16 +82,18 @@ class Trainer:
 
             if self.globaliter in self.log_iters:
                 hist_arr = []
+                grads = []
                 for name, param in self.model.named_parameters():
                     if 'bn' not in name:
                         gradients = param.grad.cpu().data.numpy()
                         
                         for grad in gradients:
                             hist_arr.append(np.linalg.norm(grad))
+                        grads.append(gradients)
                 self.logger.add_histogram('Gradient', np.log(hist_arr)
                                           , self.globaliter)
-                with open(self.log_dir + '/hist_buf_{}.pkl'.format(self.globaliter), 'wb') as o:
-                    pickle.dump(obj=hist_arr, file=o)
+                with open(self.log_dir + f'/grad_buf_{self.globaliter}.pkl', 'wb') as o:
+                    pickle.dump(obj=grads, file=o)
 
             self.optimizer.step()
             self.scheduler.step(epoch)
